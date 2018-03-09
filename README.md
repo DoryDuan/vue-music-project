@@ -221,3 +221,53 @@ slider.vue组件里面才能进行正确的计算。
     }
 }
 ```
+
+###css3动画库create-keyframe-animation
+
+width: 80%;js计算宽度window.innerWidth * 0.8
+
+list为组件，bgImage为元素
+this.$refs.list.$el.style.top = `${this.imageHeight}px`
+this.$refs.bgImage.style[transform] = `scale(${scale})`
+
+audio标签
+<audio ref="audio" :src="currentSong.url" @play="ready" @error="error" @timeupdate="updateTime"
+           @ended="end"></audio>
+src播放地址，歌曲准备好可以播放的时候派发play事件，歌曲报错的时候派发error事件，歌曲在进行播放的时候派发timeupdate事件，歌曲播放完会派发end事件
+audio标签有一个currentTime（当前时间）可以读写的属性
+ updateTime(e) {
+        this.currentTime = e.target.currentTime
+      },
+
+或0操作符
+interval = interval | 0
+保留整数部分，正数向下取整，负数向上取整
+
+touchstart，touchmove一般都会加prevent阻止浏览器的默认行为
+ @touchstart.prevent="progressTouchStart"
+@touchmove.prevent="progressTouchMove"
+
+findIndex:返回传入一个测试条件（函数）符合条件的数组第一个元素位置,数组中的每个元素都调用一次函数执行
+let index = list.findIndex((item) => {
+          return item.id === this.currentSong.id
+        })
+
+Element.getBoundingClientRect()方法返回元素的大小及其相对于视口的位置
+
+复制一个数组的副本let _arr = arr.slice()
+
+对base64进行解码的库$ npm install --save js-base64
+
+解析歌词：npm install lyric-parser
+
+Promise.resolve(value)方法返回一个以给定值解析后的Promise对象
+var promise1 = Promise.resolve([1, 2, 3]);
+promise1.then(function(value) {
+  console.log(value);
+  // expected output: Array [1, 2, 3]
+});
+
+vuex的使用
+1.非父子组件传递复杂的数据 2.很多组件共用的数据
+vuex的action
+// 1.异步操作；2.对mutation的封装，某个动作需要触发多个mutation的时候，通过调用一个action修改多个mutation

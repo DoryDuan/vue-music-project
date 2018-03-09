@@ -4,47 +4,48 @@
   </transition>
 </template>
 <script type="text/ecmascript-6">
+  import MusicList from 'components/music-list/music-list'
   import {mapGetters} from 'vuex'
-  import {getSingerDetail} from 'api/singer'
+  import {getSongList} from 'api/recommend'
   import {ERR_OK} from 'api/config'
   import {createSong} from 'common/js/song'
-  import MusicList from 'components/music-list/music-list'
 
   export default{
+    computed: {
+      title() {
+        return this.disc.dissname
+      },
+      bgImage() {
+        return this.disc.imgurl
+      },
+      ...mapGetters([
+        'disc'
+      ])
+    },
     data() {
       return {
         songs: []
       }
     },
-    computed: {
-      title() {
-        return this.singer.name
-      },
-      bgImage() {
-        return this.singer.avatar
-      },
-      ...mapGetters(['singer'])
-    },
     created() {
-      this._getDetail()
+      this._getSongList()
     },
     methods: {
-      _getDetail() {
-        // 处理边界情况，用户直接在该页面刷新是获取不到id的
-        if (!this.singer.id) {
-          this.$router.push('/singer')
+      _getSongList() {
+        if (!this.disc.dissid) {
+          this.$router.push('/recommend')
           return
         }
-        getSingerDetail(this.singer.id).then((res) => {
+        getSongList(this.disc.dissid).then((res) => {
+          console.log(res)
           if (res.code === ERR_OK) {
-            this.songs = this._normalizeSongs(res.data.list)
+            this.songs = this._normalizeSongs(res.cdlist[0].songlist)
           }
         })
       },
       _normalizeSongs(list) {
         let ret = []
-        list.forEach((item) => {
-          let {musicData} = item
+        list.forEach((musicData) => {
           if (musicData.songid && musicData.albummid) {
             ret.push(createSong(musicData))
           }
@@ -58,8 +59,6 @@
   }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  import '~common/stylus/variable'
-
   .slide-enter-active, .slide-leave-active
     transition: all 0.3s
 

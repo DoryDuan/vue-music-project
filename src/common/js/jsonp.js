@@ -1,6 +1,3 @@
-/**
- * Created by Administrator on 2017/9/18.
- */
 import originJSONP from 'jsonp'
 
 export default function jsonp(url, data, option) {

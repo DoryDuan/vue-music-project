@@ -1,6 +1,3 @@
-/**
- * Created by Administrator on 2018/2/6.
- */
 import {playMode} from 'common/js/config'
 const state = {
   singer: {},
