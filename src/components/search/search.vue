@@ -1,16 +1,71 @@
 <template>
     <div class="search">
       <div class="search-box-wrapper">
-        <search-box ref="searchBox"></search-box>
+        <search-box ref="searchBox" @query="onQueryChange"></search-box>
       </div>
+      <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
+        <div ref="shortcut" class="shortcut">
+          <!--<div>-->
+            <div class="hot-key">
+              <h1 class="title">热门搜索</h1>
+              <ul>
+                <li @click="addQuery(item.k)" class="item" v-for="item in hotKey">
+                  <span>{{item.k}}</span>
+                </li>
+              </ul>
+            </div>
+            <!--<div class="search-history" v-show="searchHistory.length">-->
+              <!--<h1 class="title">-->
+                <!--<span class="text">搜索历史</span>-->
+                <!--<span @click="showConfirm" class="clear">-->
+                <!--<i class="icon-clear"></i>-->
+              <!--</span>-->
+              <!--</h1>-->
+              <!--<search-list @delete="deleteSearchHistory" @select="addQuery" :searches="searchHistory"></search-list>-->
+            <!--</div>-->
+          <!--</div>-->
+        </div>
+      </div>
+      <div class="search-result" v-show="query" ref="searchResult">
+        <suggest ref="suggest" :query="query"></suggest>
+      </div>
+      <router-view></router-view>
     </div>
 </template>
 <script type="text/ecmascript-6">
   import SearchBox from 'base/search-box/search-box'
+  import {getHotKey} from 'api/search'
+  import {ERR_OK} from 'api/config'
+  import Suggest from 'components/suggest/suggest'
 
   export default{
+    data() {
+      return {
+        hotKey: [],
+        query: ''
+      }
+    },
+    created() {
+      this._getHotKey()
+    },
+    methods: {
+      addQuery(query) {
+        this.$refs.searchBox.setQuery(query)
+      },
+      onQueryChange(query) {
+        this.query = query
+      },
+      _getHotKey() {
+        getHotKey().then((res) => {
+          if (res.code === ERR_OK) {
+            this.hotKey = res.data.hotkey.slice(0, 10)
+          }
+        })
+      }
+    },
     components: {
-      SearchBox
+      SearchBox,
+      Suggest
     }
   }
 </script>
