@@ -1,5 +1,10 @@
 <template>
-  <scroll ref="suggest" class="suggest" :data="result" :pullup="pullup" @scrollToEnd="searchMore">
+  <scroll ref="suggest" class="suggest"
+          :data="result"
+          :pullup="pullup"
+          :beforeScroll="beforeScroll"
+          @scrollToEnd="searchMore"
+          @beforeScroll="listScroll">
     <ul class="suggest-list">
       <li class="suggest-item" @click="selectItem(item)" v-for="item in result">
         <div class="icon">
@@ -11,9 +16,9 @@
       </li>
       <loading v-show="hasMore" title=""></loading>
     </ul>
-    <!--<div class="no-result-wrapper">-->
-      <!--<no-result title="抱歉，暂无搜索结果"></no-result>-->
-    <!--</div>-->
+    <div v-show="!hasMore && !result.length" class="no-result-wrapper">
+      <no-result title="抱歉，暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 <script type="text/ecmascript-6">
@@ -24,6 +29,7 @@
   import {createSong} from 'common/js/song'
   import Singer from 'common/js/singer'
   import {mapMutations, mapActions} from 'vuex'
+  import NoResult from 'base/no-result/no-result'
 
   const TYPE_SINGER = 'singer'
   const perpage = 20
@@ -49,13 +55,15 @@
       }
     },
     methods: {
+      refresh() {
+        this.$refs.suggest.refresh()
+      },
       search() {
         // query发生改变的时候，page需要重置为1，把scroll滚动到顶部
         this.page = 1
         this.hasMore = true
         this.$refs.suggest.scrollTo(0, 0)
         search(this.query, this.page, this.showSinger, perpage).then((res) => {
-          console.log(res)
           if (res.code === ERR_OK) {
             this.result = this._genResult(res.data)
             this._checkMore(res.data)
@@ -73,6 +81,9 @@
             this._checkMore(res.data)
           }
         })
+      },
+      listScroll() {
+        this.$emit('listScroll')
       },
       selectItem(item) {
         if (item.type === TYPE_SINGER) {
@@ -142,7 +153,8 @@
     },
     components: {
       Scroll,
-      Loading
+      Loading,
+      NoResult
     }
   }
 </script>
