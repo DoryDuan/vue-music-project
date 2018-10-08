@@ -1,6 +1,5 @@
 # vue-music-project
 
-
 	install dependencies
 	npm install
 
